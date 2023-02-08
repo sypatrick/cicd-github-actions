@@ -32,3 +32,48 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
+
+    # create application.properties (보안상의 이유로 actions를 통해 생성)
+    - name: make application-dev.properties
+      if: contains(github.ref, 'master') # branch가 master일 때
+      run: |
+        # spring의 resources 경로로 이동
+         cd ./src/main/resources 
+        
+         # application.properties 파일 생성
+         touch ./application.properties 
+        
+         # GitHub-Actions에서 설정한 값을 application.properties 파일에 쓰기
+         echo "${{ secrets.PROPERTIES }}" > ./application.properties
+      shell: bash
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-1
+
+    # ECR 로그인 및 DOCKER BUILD
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: patrickproject
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build --platform arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+#    # EC2에서 image 가져와서 실행
+#    ## docker build & push to production
+#    - name: Docker build & push
+#      if: contains(github.ref, 'master')
+#      run: |
+#        docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:[tag 이름]
+#        docker run
