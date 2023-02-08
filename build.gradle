@@ -24,7 +24,15 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+/**
+ Step 3/4 : COPY ${JAR_FILE} app.jar
+ When using COPY with more than one source file, the destination must be a directory and end with a /
+ ..-plain.jar 생성 하지 않아야 함.
+ */
 
+jar{
+    enabled = false
+}
 tasks.named('test') {
     useJUnitPlatform()
 }
