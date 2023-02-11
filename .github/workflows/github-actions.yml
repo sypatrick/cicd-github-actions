@@ -70,10 +70,26 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-#    # EC2에서 image 가져와서 실행
-#    ## docker build & push to production
+    # EC2에서 image 가져와서 실행
+    ## docker build & push to production
+    - name: Deploy
+      uses: appleboy/ssh-action@master
+      id: deploy
+      if: contains(github.ref, 'master')
+      with:
+        host: ${{ secrets.HOST_EC2 }}
+        username: ec2-user
+        key: ${{ secrets.EC2_PASSWORD }}
+        envs: GITHUB_SHA
+        script: |
+          sudo docker rm -f $(docker ps -qa)
+          sudo docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:latest
+          docker-compose up -d
+          docker image prune -f
+
 #    - name: Docker build & push
 #      if: contains(github.ref, 'master')
+#
 #      run: |
-#        docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:[tag 이름]
+#        docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:latest
 #        docker run
