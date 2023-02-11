@@ -82,10 +82,9 @@ jobs:
         key: ${{ secrets.AWS_PRIVATE_KEY }}
         envs: GITHUB_SHA
         script: |
-          sudo docker rm -f $(docker ps -qa)
           sudo docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:latest
-          docker-compose up -d
-          docker image prune -f
+#          docker-compose up -d
+#          docker image prune -f
 
 #    - name: Docker build & push
 #      if: contains(github.ref, 'master')
