@@ -92,4 +92,4 @@ jobs:
 #
 #      run: |
 #        docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:latest
-#        docker run
+
