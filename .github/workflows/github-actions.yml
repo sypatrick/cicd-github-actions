@@ -84,7 +84,7 @@ jobs:
         envs: GITHUB_SHA
         script: |
           sudo docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.0
-          docker run -d -p 8080:80 --name ecmall 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.0
+          docker run -d --name ecmall 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.0
 #        수정(iam role추가)
 #          docker-compose up -d
 #          docker image prune -f
