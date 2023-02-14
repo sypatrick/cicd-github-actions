@@ -67,9 +67,9 @@ jobs:
         IMAGE_TAG: 0.1.1
       run: |
     #ec2에서 실행시키기 위해서 amd64로 변경, 기존 (linux/arm64) <-- Apple Mac
-        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:0.1.0 .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:0.1.0
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:0.1.0"
+        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:0.1.1 .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:0.1.1
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:0.1.1"
 
     # EC2에서 image 가져와서 실행
     ## docker build & push to production
