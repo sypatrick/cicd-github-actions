@@ -64,12 +64,12 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: patrickproject
-        IMAGE_TAG: 0.1.1
+        IMAGE_TAG: 0.1.0
       run: |
     #ec2에서 실행시키기 위해서 amd64로 변경, 기존 (linux/arm64) <-- Apple Mac
-        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:0.1.1 .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:0.1.1
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:0.1.1"
+        docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:0.1.0 .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:0.1.0
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:0.1.0"
 
     # EC2에서 image 가져와서 실행
     ## docker build & push to production
@@ -83,8 +83,8 @@ jobs:
         key: ${{ secrets.AWS_PRIVATE_KEY }}
         envs: GITHUB_SHA
         script: |
-          sudo docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.1
-          docker run -d -p 8080:80 --name ecmall 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.1
+          sudo docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.0
+          docker run -d -p 8080:80 --name ecmall 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.0
 #        수정(iam role추가)
 #          docker-compose up -d
 #          docker image prune -f
