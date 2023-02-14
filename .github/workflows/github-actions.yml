@@ -54,7 +54,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-1
 
-      # ECR 로그인 및 DOCKER BUILD
+      # ECR 로그인 및 DOCKER BUILD(ec2환경에서 실행하려면 build시 platform amd64 지정해줘야함)
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -69,8 +69,9 @@ jobs:
           docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:0.1.0 .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:0.1.0
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:0.1.0"
-      # EC2에서 image 가져와서 실행
-      ## docker build & push to production
+      # EC2에서 image 가져와서 실행(IAM Role 에서 ec2 접근권한 설정후 인스턴스에 적용 혹은 aws configure로 accesskey, secret key 입력 -> 하고나면 ~/.aws 하위에서 확인가능)
+      # aws ecr get-login-password --region ap-northeast-1 -> ~/.docker/config.json 값 확인 가능, 로그인 인증과정 거친후 image pull 할 수 있음.
+      ## EC2에 배포
       - name: Deploy
         uses: appleboy/ssh-action@master
         id: deploy
@@ -82,12 +83,4 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.0
-#        수정(iam role추가)
-#          docker-compose up -d
-#          docker image prune -f
-
-#    - name: Docker build & push
-#      if: contains(github.ref, 'master')
-#
-#      run: |
-#        docker pull 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:latest
+            docker run -d -p 8080:8080 --name ecmall 483543817526.dkr.ecr.ap-northeast-1.amazonaws.com/patrickproject:0.1.0
