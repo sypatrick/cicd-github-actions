@@ -34,7 +34,7 @@ jobs:
         arguments: build
 
     # create application.properties (보안상의 이유로 actions를 통해 생성)
-    - name: make application-dev.properties
+    - name: make application.properties
       if: contains(github.ref, 'master') # branch가 master일 때
       run: |
         # spring의 resources 경로로 이동
@@ -64,11 +64,11 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: patrickproject
-        IMAGE_TAG: ${{ github.sha }}
+        IMAGE_TAG: lastest
       run: |
-        docker build --platform arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build --platform arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY:lastest .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:lastest"
 
     # EC2에서 image 가져와서 실행
     ## docker build & push to production
